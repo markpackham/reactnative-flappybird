@@ -11,12 +11,19 @@ export default function App() {
   const birdLeft = screenWidth / 2;
   const [birdBottom, setBirdBottom] = useState(screenHeigh / 2);
   const [obstaclesLeft, setObstaclesLeft] = useState(screenWidth);
+  const [obstaclesLeftTwo, setObstaclesLeftTwo] = useState(
+    screenWidth + screenWidth / 2 + 30
+  );
+  // starts at 0 then becomes random
+  const [obstaclesNegHeight, setObstaclesNegHeight] = useState(0);
+  const [obstaclesNegHeightTwo, setObstaclesNegHeightTwo] = useState(0);
   const gravity = 3;
   let gap = 200;
   let obstacleWidth = 60;
   let obstacleHeight = 300;
   let gameTimerId;
   let obstaclesTimerId;
+  let obstaclesTimerIdTwo;
 
   // start bird falling
   useEffect(() => {
@@ -44,23 +51,44 @@ export default function App() {
     } else {
       // set back to where started
       setObstaclesLeft(screenWidth);
+      setObstaclesNegHeight(-Math.random() * 100);
     }
   }, [obstaclesLeft]);
+
+  // start second obstacles
+  useEffect(() => {
+    if (obstaclesLeftTwo > -60) {
+      obstaclesTimerIdTwo = setInterval(() => {
+        setObstaclesLeftTwo((obstaclesLeftTwo) => obstaclesLeftTwo - 5);
+      }, 30);
+      return () => {
+        clearInterval(obstaclesTimerIdTwo);
+      };
+    } else {
+      // set back to where started
+      setObstaclesLeftTwo(screenWidth);
+      setObstaclesNegHeightTwo(-Math.random() * 100);
+    }
+  }, [obstaclesLeftTwo]);
 
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
       <Bird birdBottom={birdBottom} birdLeft={birdLeft} />
       <Obstacles
+        color={"yellow"}
         obstaclesLeft={obstaclesLeft}
         obstacleWidth={obstacleWidth}
         obstacleHeight={obstacleHeight}
+        randomBottom={obstaclesNegHeight}
         gap={gap}
       />
       <Obstacles
-        obstaclesLeft={obstaclesLeft}
+        color={"green"}
+        obstaclesLeft={obstaclesLeftTwo}
         obstacleWidth={obstacleWidth}
         obstacleHeight={obstacleHeight}
+        randomBottom={obstaclesNegHeightTwo}
         gap={gap}
       />
     </View>
