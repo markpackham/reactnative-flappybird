@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
+  Text,
   Dimensions,
   TouchableWithoutFeedback,
 } from "react-native";
@@ -21,6 +22,8 @@ export default function App() {
   const [obstaclesLeftTwo, setObstaclesLeftTwo] = useState(
     screenWidth + screenWidth / 2 + 30
   );
+  // score increases by 1 for every obstacle that passes by the screen
+  const [score, setScore] = useState(0);
   // starts at 0 then becomes random
   const [obstaclesNegHeight, setObstaclesNegHeight] = useState(0);
   const [obstaclesNegHeightTwo, setObstaclesNegHeightTwo] = useState(0);
@@ -68,6 +71,7 @@ export default function App() {
       // set back to where started
       setObstaclesLeft(screenWidth);
       setObstaclesNegHeight(-Math.random() * 100);
+      setScore((score) => score + 1);
     }
   }, [obstaclesLeft]);
 
@@ -84,10 +88,11 @@ export default function App() {
       // set back to where started
       setObstaclesLeftTwo(screenWidth);
       setObstaclesNegHeightTwo(-Math.random() * 100);
+      setScore((score) => score + 1);
     }
   }, [obstaclesLeftTwo]);
 
-  // check for collisions
+  // check for collisions with obstacles
   useEffect(() => {
     if (
       ((birdBottom < obstaclesNegHeight + obstacleHeight + 30 ||
@@ -99,6 +104,7 @@ export default function App() {
         obstaclesLeftTwo > screenWidth / 2 - 30 &&
         obstaclesLeftTwo < screenWidth / 2 + 30)
     ) {
+      // you only lose if you hit an obstacle not if you hit the bottom of the screen
       gameOver();
     }
   });
@@ -114,6 +120,7 @@ export default function App() {
   return (
     <TouchableWithoutFeedback onPress={jump}>
       <View style={styles.container}>
+        {isGameOver && <Text>Score: {score}</Text>}
         <StatusBar style="auto" />
         <Bird birdBottom={birdBottom} birdLeft={birdLeft} />
         <Obstacles
